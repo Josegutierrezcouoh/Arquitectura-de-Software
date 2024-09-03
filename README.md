@@ -2,7 +2,7 @@
 Arquitectura de Software
 | Foto | Nombre |
 | ------------ | ------------ |
-|<img src="assets/112030419.jpeg" width="200%" /> | Jose Luis Gutierrez Couoh |
-| <img src="assets/Imagen de WhatsApp 2024-08-30 a las 15.06.19_d1f37759.jpg"/>| Gabruel Sanchez Peraza |
-| | Marco Santiago Canche May |
-| | Luis Carlos Pacheco |
+|<img src="assets/joseluis_img.jpeg" width="200px" /> | Jose Luis Gutierrez Couoh |
+| <img src="assets/gabriel_img.jpg" width="200px"/>| Gabruel Sanchez Peraza |
+| <img src="assets/marco_img.jpeg" width="200px" />| Marco Santiago Canche May |
+| <img src="assets/luiscarlos_img.jpeg" width="200px"/>| Luis Carlos Pacheco |
