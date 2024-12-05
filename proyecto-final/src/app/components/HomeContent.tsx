@@ -1,27 +1,34 @@
 'use client'
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Overlap from "./Overlap";
 import Employee from "@/domain/entities/Employee";
 import EmployeeForm from "./EmployeeForm";
+import GetEmployeesUseCase from "@/domain/usecases/GetEmployeesUseCase";
+import ActionButton from "./ActionButton";
 
 enum OverlapViewIds {
     AddEmployee,
     EditEmployee,
 }
 
-type OverlapView = 
+type OverlapView =
     | { id: OverlapViewIds.AddEmployee }
     | { id: OverlapViewIds.EditEmployee, employee: Employee };
 
 const HomeContent = () => {
     // Estado inicial con datos simulados
     const [employees, setEmployees] = useState<Employee[]>([
-        
+
     ]);
 
     const [selectedIds, setSelectedIds] = useState<number[]>([]);
     const [isShowing, setIsShowing] = useState(false);
     const [currentOverlapView, setCurrentOverlapView] = useState<OverlapView | null>(null);
+
+    const getAll = async () => {
+        const useCase = new GetEmployeesUseCase();
+        setEmployees(await useCase.execute())
+    }
 
     const handleSelect = (id: number) => {
         setSelectedIds((prev) =>
@@ -53,52 +60,51 @@ const HomeContent = () => {
 
     const getOverlapView = () => {
         if (currentOverlapView && currentOverlapView.id === OverlapViewIds.AddEmployee) {
-            return  <EmployeeForm
-            onSubmit={(employee) => {
-                setEmployees([...employees, employee]);
-                setIsShowing(false);
-                setCurrentOverlapView(null);
-            }}
-        />
+            return <EmployeeForm
+                onSubmit={(employee) => {
+                    setEmployees([...employees, employee]);
+                    setIsShowing(false);
+                    setCurrentOverlapView(null);
+                }}
+            />
         }
         if (currentOverlapView?.employee) {
             return (
                 <EmployeeForm
-                        employee={currentOverlapView.employee}
-                        onSubmit={handleEditEmployee}
-                    />
+                    employee={currentOverlapView.employee}
+                    onSubmit={handleEditEmployee}
+                />
             )
         }
-        
+
     }
 
     const tableButtons = () => {
-        return(
+        return (
             <div className="flex flex-row w-full justify-end gap-4">
-                <button
-                    className={`block py-2 px-10 bg-red-500 text-white font-bold rounded ${selectedIds.length === 0 ? 'opacity-50' : 'hover:bg-red-700'}`}
-                    onClick={handleDeleteSelected}
-
-                    disabled={selectedIds.length === 0}
+                <ActionButton onClick={handleDeleteSelected} color="red" disabled={selectedIds.length === 0}>
+                    <p>Delete</p>
+                </ActionButton>
+                <ActionButton onClick={() => {
+                    setIsShowing(true);
+                    setCurrentOverlapView({ id: OverlapViewIds.AddEmployee });
+                }}
+                    color="green"
                 >
-                    Delete
-                </button>
-                <button
-                    onClick={() => {
-                        setIsShowing(true);
-                        setCurrentOverlapView({ id: OverlapViewIds.AddEmployee });
-                    }}
-                    className="block py-2 px-10 bg-green-500 hover:bg-green-700 text-white font-bold rounded">
-                    Add New Employee
-                </button>
+                    <p>Add Employee</p>
+                </ActionButton>
             </div>
         )
     }
 
+    useEffect(() => {
+        getAll()
+    }, [])
+
     return (
         <div className="bg-white flex flex-col text-black min-h-screen gap-5 p-5">
-            <Overlap isShowing={isShowing} onClose={() => {setIsShowing(false); setCurrentOverlapView(null)}}>
-             {getOverlapView()}
+            <Overlap isShowing={isShowing} onClose={() => { setIsShowing(false); setCurrentOverlapView(null) }}>
+                {getOverlapView()}
             </Overlap>
             <h1 className="flex items w-full justify-center">Manage Employees</h1>
             {tableButtons()}
@@ -136,7 +142,7 @@ const HomeContent = () => {
                                     setIsShowing(true);
                                     setCurrentOverlapView({ id: OverlapViewIds.EditEmployee, employee });
                                 }} style={{ marginRight: "0.5rem" }}>✏️</button>
-                                <button onClick={() => {deleteOne(employee.id)}}>🗑️</button>
+                                <button onClick={() => { deleteOne(employee.id) }}>🗑️</button>
                             </td>
                         </tr>
                     ))}
