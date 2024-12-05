@@ -1,7 +1,7 @@
 'use client'
 import { useState } from "react";
 import Overlap from "./Overlap";
-import Employee from "@/src/domain/entities/Employee";
+import Employee from "@/domain/entities/Employee";
 import EmployeeForm from "./EmployeeForm";
 
 enum OverlapViewIds {
@@ -16,11 +16,7 @@ type OverlapView =
 const HomeContent = () => {
     // Estado inicial con datos simulados
     const [employees, setEmployees] = useState<Employee[]>([
-        { id: 1, name: "Thomas Hardy", email: "thomashardy@mail.com", phone: "(171) 555-2222" },
-        { id: 2, name: "Dominique Perrier", email: "dominiqueperrier@mail.com", phone: "(313) 555-5735" },
-        { id: 3, name: "Maria Anders", email: "mariaanders@mail.com", phone: "(503) 555-9931" },
-        { id: 4, name: "Fran Wilson", email: "franwilson@mail.com", phone: "(206) 619-5731" },
-        { id: 5, name: "Martin Blank", email: "martinblank@mail.com", phone: "(480) 631-2097" },
+        
     ]);
 
     const [selectedIds, setSelectedIds] = useState<number[]>([]);
@@ -76,12 +72,8 @@ const HomeContent = () => {
         
     }
 
-    return (
-        <div className="bg-white flex flex-col text-black min-h-screen gap-5 p-5">
-            <Overlap isShowing={isShowing} onClose={() => {setIsShowing(false); setCurrentOverlapView(null)}}>
-             {getOverlapView()}
-            </Overlap>
-            <h1 className="flex items w-full justify-center">Manage Employees</h1>
+    const tableButtons = () => {
+        return(
             <div className="flex flex-row w-full justify-end gap-4">
                 <button
                     className={`block py-2 px-10 bg-red-500 text-white font-bold rounded ${selectedIds.length === 0 ? 'opacity-50' : 'hover:bg-red-700'}`}
@@ -100,6 +92,16 @@ const HomeContent = () => {
                     Add New Employee
                 </button>
             </div>
+        )
+    }
+
+    return (
+        <div className="bg-white flex flex-col text-black min-h-screen gap-5 p-5">
+            <Overlap isShowing={isShowing} onClose={() => {setIsShowing(false); setCurrentOverlapView(null)}}>
+             {getOverlapView()}
+            </Overlap>
+            <h1 className="flex items w-full justify-center">Manage Employees</h1>
+            {tableButtons()}
             <table className="w-full text-black ">
                 <thead>
                     <tr className="boder-b border-black">
@@ -143,5 +145,6 @@ const HomeContent = () => {
         </div>
     );
 };
+
 
 export default HomeContent;

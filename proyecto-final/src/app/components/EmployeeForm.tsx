@@ -1,12 +1,20 @@
-import Employee from '@/src/domain/entities/Employee';
+import Employee from '@/domain/entities/Employee';
 import React, { useState } from 'react'
 
 interface EmployeeFormProps {
     employee?: Employee;
     onSubmit: (employee: Employee) => void;
 }
+
+interface EmployeeDTO  {
+    id: number;
+    name: string;
+    email: string;
+    phone: string;
+}
+
 const EmployeeForm: React.FC<EmployeeFormProps> = ({ employee, onSubmit }) => {
-    const [currentEmployee, setCurrentEmployee] = useState<Employee>(employee || { id: 0, name: '', email: '', phone: '' });
+    const [currentEmployee, setCurrentEmployee] = useState<EmployeeDTO>( { id: employee?.id || 0, name: employee?.name || '', email: employee?.email || '', phone:  employee?.phone || '' });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setCurrentEmployee((prev) => ({
@@ -41,7 +49,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({ employee, onSubmit }) => {
             <button
                 onClick={(e) => {
                     e.preventDefault();
-                    onSubmit(currentEmployee);
+                    onSubmit(new Employee(currentEmployee.name, currentEmployee.email, currentEmployee.phone, currentEmployee.id));
                 }}
             >
                 {employee ? 'Update' : 'Add'} Employee
