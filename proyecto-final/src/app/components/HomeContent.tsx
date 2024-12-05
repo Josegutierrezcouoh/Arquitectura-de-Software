@@ -26,8 +26,12 @@ const HomeContent = () => {
     const [currentOverlapView, setCurrentOverlapView] = useState<OverlapView | null>(null);
 
     const getAll = async () => {
-        const useCase = new GetEmployeesUseCase();
-        setEmployees(await useCase.execute())
+        try {
+            const useCase = new GetEmployeesUseCase();
+            setEmployees(await useCase.execute())
+        } catch (error) {
+            console.error(error)
+        }
     }
 
     const handleSelect = (id: number) => {

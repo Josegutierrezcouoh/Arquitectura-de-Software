@@ -7,16 +7,25 @@ class EmployeesDataSource implements EmployeesDataSourceProtocol {
 
     async getAll(): Promise<Employee[]> {
         if (this.employees.length > 0) {
-            return Promise.resolve(this.employees);
+            return []
         }
         const results = await EmployeeDAO.getAll()
-        this.employees = results.map((employeeDAO) => {
-            return new Employee(employeeDAO.name, employeeDAO.email, employeeDAO.phone, employeeDAO.id);
+        
+        results.forEach(employeeDAO => {
+            if (employeeDAO.id) {
+                const employee = new Employee(employeeDAO.name, employeeDAO.email, employeeDAO.phone, employeeDAO.id!)
+                this.employees.push(employee)
+            }
+            
         })
+
         return this.employees
     }
     async get(id: number): Promise<Employee> {
         const employeeDAO = await EmployeeDAO.get(id);
+        if (employeeDAO.id === undefined) {
+            throw new Error('Employee not found')
+        }
         return new Employee(employeeDAO.name, employeeDAO.email, employeeDAO.phone, employeeDAO.id)
     }
     async add(employee: Employee): Promise<void> {
