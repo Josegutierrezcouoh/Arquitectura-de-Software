@@ -21,7 +21,6 @@ class GetEmployeesUseCase {
      */
     async execute(): Promise<Employee[]> {
         const results = await this.employeeRepository.getAll()
-        results.forEach(employee => {console.log(employee)})
         return results; 
     }
 }

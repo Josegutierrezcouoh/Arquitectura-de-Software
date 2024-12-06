@@ -52,8 +52,13 @@ const HomeContent = () => {
     };
 
     const handleDeleteSelected = () => {
-        setEmployees(employees.filter((employee) => !selectedIds.includes(employee.id)));
-        setSelectedIds([]);
+        try {
+            setEmployees(employees.filter((employee) => !selectedIds.includes(employee.id)));
+            new DeleteEmployeesUseCase(selectedIds).execute()
+            setSelectedIds([]);
+        } catch (error) {
+            console.error(error)
+        }
     };
 
     const deleteOne = async (id: number) => {
@@ -63,13 +68,12 @@ const HomeContent = () => {
         try {
             updatedEmployees.splice(employeeIndex, 1);
             setEmployees(updatedEmployees);
-            await new DeleteEmployeesUseCase(id).execute()
+            await new DeleteEmployeesUseCase([id]).execute()
         } catch (error) {
             console.error(error)
             setEmployees(updatedEmployees.splice(employeeIndex, 1, employee));
 
         }
-
     }
 
     const handleEditEmployee = async (employee: Employee) => {
@@ -148,9 +152,9 @@ const HomeContent = () => {
             </Overlap>
             <h1 className="flex items w-full justify-center">Manage Employees</h1>
             {tableButtons()}
-            <table className="w-full text-black ">
+            <table className="w-full text-black border-black bg-blue-200">
                 <thead>
-                    <tr className="boder-b border-black">
+                    <tr className="">
                         <th>
                             <input
                                 type="checkbox"
@@ -164,7 +168,7 @@ const HomeContent = () => {
                         <th>Actions</th>
                     </tr>
                 </thead>
-                <tbody className="w-full">
+                <tbody className="w-full p-5">
                     {employees.map((employee, index) => (
                         <tr key={employee.id} className='border-b border-black bg-red' style={{ backgroundColor: `${index % 2 == 0 ? '#d2d4d2' : 'white'}`, textAlign: "center" }}>
                             <td>

@@ -8,14 +8,14 @@ import EmployeesDataSource from "@/infraestructure/datasources/EmployeesDataSour
 class DeleteEmployeesUseCase {
 
     private employeeRepository: EmployeesRepositoryProtocol = new EmployeesRepository(new EmployeesDataSource());
-    private _employeeId: number;
+    private _employeesId: number[];
 
     /**
      * Constructor de la clase DeleteEmployeesUseCase.
      * @param employeeId - El ID del empleado a eliminar.
      */
-    constructor(employeeId: number) {
-        this._employeeId = employeeId;
+    constructor(employeesId: number[]) {
+        this._employeesId = employeesId;
     }
 
     /**
@@ -23,7 +23,14 @@ class DeleteEmployeesUseCase {
      * @returns Una promesa que se resuelve cuando el empleado ha sido eliminado.
      */
     async execute(): Promise<void> {
-        return this.employeeRepository.delete(this._employeeId);
+        const deletePromises = this._employeesId.map(employeeId => 
+            this.deleteEmployee(employeeId)
+        );
+        await Promise.all(deletePromises);
+    }
+
+    private deleteEmployee(employeeId: number): Promise<void> {
+        return this.employeeRepository.delete(employeeId);
     }
 }
 
