@@ -10,10 +10,9 @@ class EmployeesDataSource implements EmployeesDataSourceProtocol {
             return []
         }
         const results = await EmployeeDAO.getAll()
-        
         results.forEach(employeeDAO => {
             if (employeeDAO.id) {
-                const employee = new Employee(employeeDAO.name, employeeDAO.email, employeeDAO.phone, employeeDAO.id!)
+                const employee = new Employee(employeeDAO.name, employeeDAO.email, employeeDAO.phone, employeeDAO.id)
                 this.employees.push(employee)
             }
             
@@ -28,9 +27,15 @@ class EmployeesDataSource implements EmployeesDataSourceProtocol {
         }
         return new Employee(employeeDAO.name, employeeDAO.email, employeeDAO.phone, employeeDAO.id)
     }
-    async add(employee: Employee): Promise<void> {
+    async add(employee: Employee): Promise<Employee> {
         const newEmployeeDAO = new EmployeeDAO(employee.name, employee.email, employee.phone);
         await newEmployeeDAO.add();
+        
+        if (!newEmployeeDAO.id) {
+            throw new Error('Employee not found')
+        }
+
+        return new Employee(newEmployeeDAO.name, newEmployeeDAO.email, newEmployeeDAO.phone, newEmployeeDAO.id)
     }
     async update(employee: Employee): Promise<void> {
         const employeeDAO = new EmployeeDAO(employee.name, employee.email, employee.phone, employee.id);

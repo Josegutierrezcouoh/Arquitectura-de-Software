@@ -21,7 +21,7 @@ class IndexedDBManager<T> {
             request.onupgradeneeded = (event) => {
                 const db = (event.target as IDBOpenDBRequest).result;
                 if (!db.objectStoreNames.contains(this.storeName)) {
-                    db.createObjectStore(this.storeName, { keyPath: 'id', autoIncrement: true });
+                    db.createObjectStore(this.storeName, { keyPath: '_id', autoIncrement: true });
                 }
             };
 
@@ -74,7 +74,7 @@ class IndexedDBManager<T> {
         return new Promise((resolve, reject) => {
             const transaction = db.transaction(this.storeName, 'readwrite');
             const store = transaction.objectStore(this.storeName);
-            const request = store.add(data);
+            const request = store.add({ ...data });
 
             request.onsuccess = () => {
                 resolve(request.result as number);
@@ -91,7 +91,7 @@ class IndexedDBManager<T> {
         return new Promise((resolve, reject) => {
             const transaction = db.transaction(this.storeName, 'readwrite');
             const store = transaction.objectStore(this.storeName);
-            const request = store.put(data);
+            const request = store.put({ ...data });
 
             request.onsuccess = () => {
                 resolve();

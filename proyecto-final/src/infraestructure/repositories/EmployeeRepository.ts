@@ -16,7 +16,7 @@ class EmployeesRepository implements EmployeesRepositoryProtocol {
     async get(id: number): Promise<Employee> {
         return this.dataSource.get(id);
     }
-    async add(employee: Employee): Promise<void> {
+    async add(employee: Employee): Promise<Employee> {
         return this.dataSource.add(employee);
     }
     async update(employee: Employee): Promise<void> {

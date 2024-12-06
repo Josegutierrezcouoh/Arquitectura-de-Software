@@ -10,7 +10,9 @@ class GetEmployeesUseCase {
     constructor() { }
 
     async execute(): Promise<Employee[]> {
-        return this.employeeRepository.getAll();
+        const results = await this.employeeRepository.getAll()
+        results.forEach(employee => {console.log(employee)})
+        return results; 
     }
 }
 
