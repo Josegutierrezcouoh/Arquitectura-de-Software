@@ -5,6 +5,9 @@ import Employee from "@/domain/entities/Employee";
 import EmployeeForm from "./EmployeeForm";
 import GetEmployeesUseCase from "@/domain/usecases/GetEmployeesUseCase";
 import ActionButton from "./ActionButton";
+import DeleteEmployeesUseCase from "@/domain/usecases/DeleteEmployeUseCase";
+import UpdateEmployeesUseCase from "@/domain/usecases/UpdateEmployeUseCase";
+import AddEmployeeUseCase from "@/domain/usecases/AddEmployeUseCase";
 
 enum OverlapViewIds {
     AddEmployee,
@@ -53,23 +56,56 @@ const HomeContent = () => {
         setSelectedIds([]);
     };
 
-    const deleteOne = (id: number) => {
-        setEmployees(employees.filter((employee) => employee.id !== id));
+    const deleteOne = async (id: number) => {
+        const employeeIndex = employees.findIndex(e => e.id === id);
+        const employee = employees[employeeIndex];
+        const updatedEmployees = [...employees];
+        try {
+            updatedEmployees.splice(employeeIndex, 1);
+            setEmployees(updatedEmployees);
+            await new DeleteEmployeesUseCase(id).execute()
+        } catch (error) {
+            console.error(error)
+            setEmployees(updatedEmployees.splice(employeeIndex, 1, employee));
+
+        }
+
     }
 
-    const handleEditEmployee = (employee: Employee) => {
-        setEmployees(employees.map((e) => (e.id === employee.id ? employee : e)));
-        setIsShowing(false)
+    const handleEditEmployee = async (employee: Employee) => {
+        const employeeIndex = employees.findIndex(e => e.id === employee.id);
+        const oldEmployee = employees[employeeIndex];
+        const updatedEmployees = [...employees];
+
+        try {
+            updatedEmployees[employeeIndex] = employee;
+            setEmployees(updatedEmployees);
+            setIsShowing(false)
+            setCurrentOverlapView(null)
+
+            await new UpdateEmployeesUseCase(employee).execute()
+        } catch (error) {
+            console.error(error)
+            updatedEmployees[employeeIndex] = oldEmployee;
+            setEmployees(updatedEmployees);
+        }
+    }
+
+    const handleAddEmployee = async (employee: Employee) => {
+        try {
+            const newEmployee = await new AddEmployeeUseCase(employee).execute()
+            setEmployees([...employees, newEmployee]);
+            setIsShowing(false)
+            setCurrentOverlapView(null)
+        } catch (error) {
+            console.error(error)
+        }
     }
 
     const getOverlapView = () => {
         if (currentOverlapView && currentOverlapView.id === OverlapViewIds.AddEmployee) {
             return <EmployeeForm
-                onSubmit={(employee) => {
-                    setEmployees([...employees, employee]);
-                    setIsShowing(false);
-                    setCurrentOverlapView(null);
-                }}
+                onSubmit={handleAddEmployee}
             />
         }
         if (currentOverlapView?.employee) {
