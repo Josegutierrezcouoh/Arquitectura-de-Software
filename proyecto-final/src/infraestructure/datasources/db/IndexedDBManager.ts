@@ -1,16 +1,29 @@
 'use client'
-
+/**
+* Ejecuta el caso de uso para encontrar un empleado.
+* @returns Una promesa que se resuelve con el empleado encontrado.
+*/
 class IndexedDBManager<T> {
     private dbName: string;
     private storeName: string;
     private version: number;
 
+    /**
+    * Crea una instancia de IndexedDBManager.
+    * @param dbName - El nombre de la base de datos.
+    * @param storeName - El nombre del almacén de objetos.
+    * @param version - La versión de la base de datos.
+    */
     constructor(dbName: string, storeName: string, version: number = 1) {
         this.dbName = dbName;
         this.storeName = storeName;
         this.version = version;
     }
 
+    /**
+     * Abre la base de datos.
+     * @returns Una promesa que se resuelve con la instancia de IDBDatabase.
+     */
     private openDB(): Promise<IDBDatabase> {
         if(!window.indexedDB) {
             throw new Error('IndexedDB no esta disponible, intente acceder desde otro navegador.');
@@ -35,6 +48,10 @@ class IndexedDBManager<T> {
         });
     }
 
+    /**
+     * Obtiene todos los registros del almacén de objetos.
+     * @returns Una promesa que se resuelve con una lista de registros.
+     */
     async getAll(): Promise<T[]> {
         const db = await this.openDB();
         return new Promise((resolve, reject) => {
@@ -52,6 +69,11 @@ class IndexedDBManager<T> {
         });
     }
 
+    /**
+     * Obtiene un registro por su ID.
+     * @param id - El ID del registro.
+     * @returns Una promesa que se resuelve con el registro.
+     */
     async get(id: number): Promise<T> {
         const db = await this.openDB();
         return new Promise((resolve, reject) => {
@@ -69,6 +91,11 @@ class IndexedDBManager<T> {
         });
     }
 
+    /**
+     * Agrega un nuevo registro al almacén de objetos.
+     * @param data - Los datos del registro a agregar.
+     * @returns Una promesa que se resuelve con el ID del nuevo registro.
+     */
     async add(data: T): Promise<number> {
         const db = await this.openDB();
         return new Promise((resolve, reject) => {
@@ -86,6 +113,11 @@ class IndexedDBManager<T> {
         });
     }
 
+    /**
+     * Actualiza un registro existente en el almacén de objetos.
+     * @param data - Los datos del registro a actualizar.
+     * @returns Una promesa que se resuelve cuando la actualización se completa.
+     */
     async update(data: T): Promise<void> {
         const db = await this.openDB();
         return new Promise((resolve, reject) => {
@@ -103,6 +135,11 @@ class IndexedDBManager<T> {
         });
     }
 
+    /**
+     * Elimina un registro del almacén de objetos por su ID.
+     * @param id - El ID del registro a eliminar.
+     * @returns Una promesa que se resuelve cuando la eliminación se completa.
+     */
     async delete(id: number): Promise<void> {
         const db = await this.openDB();
         return new Promise((resolve, reject) => {
